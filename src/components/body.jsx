@@ -1,11 +1,10 @@
 import React from "react";
-import Day from "./day.jsx";
+import { Week } from "./week.jsx";
+import { Day } from "./day.jsx";
 
 export const Body = props => {
   let content = [];
-  // console.log(props);
   let { date } = props;
-  console.log(date);
   let countDays = new Date(
     date.getFullYear(),
     date.getMonth() + 1,
@@ -19,6 +18,30 @@ export const Body = props => {
   ).getDay();
 
   let countRows = Math.ceil((firstNumberDay + countDays) / 7);
+
+  for (let i = 0; i < countRows; i++) {
+    let dayList = [];
+
+    for (let j = 1; j <= 7; j++) {
+      if (j < firstNumberDay) {
+        let day = new Date(
+          date.getFullYear(),
+          date.getMonth() - 1,
+          7 - (7 - firstNumberDay)
+        );
+      }
+
+      dayList.push(<Day>{j < firstNumberDay ? 0 : i}</Day>);
+    }
+
+    content.push(<Week>{dayList}</Week>);
+  }
   console.log(firstNumberDay);
-  return <p>{countRows}</p>;
+  return (
+    <div className="calendar-body">
+      <p>{countRows}</p>
+      {content}
+      <Week />
+    </div>
+  );
 };

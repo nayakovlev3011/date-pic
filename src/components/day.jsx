@@ -1,5 +1,5 @@
 import React from "react";
 
 export const Day = props => {
-  return <div className="caledar__day">{props.day}</div>;
+  return <div className="caledar__day">{props.children}</div>;
 };
