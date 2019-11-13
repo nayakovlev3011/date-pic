@@ -4,8 +4,8 @@ import { Day } from "./day.jsx";
 
 export const Body = props => {
   let content = [];
-  let { date } = props;
-  let current = new Date();
+  let { date, shortNameDaysWeek } = props;
+  let current = new Date().setHours(0, 0, 0, 0);
 
   let countDays = new Date(
     date.getFullYear(),
@@ -24,30 +24,59 @@ export const Body = props => {
   let countRows = Math.ceil((firstNumberDay + countDays) / 7);
   let day = 1;
   let index = 0;
+  let dayCurrentMonth; //день не текущего месяца
+  let endCurrentMonth = false;
 
-  for (let i = 0; i < countRows; i++) {
+  for (let i = 0; i <= countRows; i++) {
     let dayList = [];
 
     for (let j = 0; j < 7; j++) {
       let d; //значение даты
       let curr = false; //отрисовываемая дата является текущей?
       let weekend = false; //день выходной?
+      let cls = "";
 
-      if (day <= countDays && index >= firstNumberDay) {
-        d = day;
-      } else if (index < firstNumberDay) {
-        d = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          (7 - firstNumberDay - index) * -1
-        ).getDate();
-      }
-      if (day === countDays) {
-        day = 0;
-      }
+      if (i > 0) {
+        if (endCurrentMonth) {
+          dayCurrentMonth = false;
+        } else {
+          dayCurrentMonth = true;
+        }
 
-      if (d === current.getDate()) {
-        curr = true;
+        cls = "";
+
+        if (day <= countDays && index >= firstNumberDay) {
+          d = day;
+        } else if (index < firstNumberDay) {
+          d = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            (7 - firstNumberDay - index) * -1
+          ).getDate();
+
+          dayCurrentMonth = false;
+        }
+
+        if (day % countDays === 0) {
+          day = 0;
+          endCurrentMonth = true;
+        }
+
+        if (
+          new Date(date.getFullYear(), date.getMonth(), d).getTime() === current
+        ) {
+          curr = true;
+        }
+
+        if (index >= firstNumberDay) {
+          day++;
+        }
+
+        index++;
+      } else {
+        cls = "calendar__title";
+        d = shortNameDaysWeek[j];
+        dayCurrentMonth = true;
       }
 
       if ((j > 0 && j % 5 === 0) || (j > 0 && j % 6 === 0)) {
@@ -55,20 +84,20 @@ export const Body = props => {
       }
 
       dayList.push(
-        <Day id={i * j + j} current={curr} weekend={weekend}>
+        <Day
+          id={i * j + j}
+          cls={cls}
+          current={curr}
+          weekend={weekend}
+          dayCurrentMonth={dayCurrentMonth}
+        >
           {d}
         </Day>
       );
-
-      if (index >= firstNumberDay) {
-        day++;
-      }
-
-      index++;
     }
 
-    content.push(<Week>{dayList}</Week>);
+    content.push(<Week id={i}>{dayList}</Week>);
   }
-  //console.log(firstNumberDay);
+
   return <div className="calendar-body">{content}</div>;
 };
