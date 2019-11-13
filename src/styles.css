@@ -1,4 +1,30 @@
-.App {
+.calendar {
   font-family: sans-serif;
-  text-align: center;
+  width: 230px;
+  border: 1px solid;
+  padding: 10px;
+}
+.calendar-header {
+}
+.calendar-bdoy {
+  border: 1px solid;
+}
+.calendar__week {
+  display: flex;
+  justify-content: center;
+}
+.calendar__day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+}
+.calendar__day_current {
+  background-color: blue;
+  color: red;
+  border-radius: 50%;
+}
+.calendar__day_weekend {
+  color: red;
 }

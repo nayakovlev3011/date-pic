@@ -1,6 +1,5 @@
 import React from "react";
-import { Day } from "./day.jsx";
 
 export const Week = props => {
-  return <div>{props.children}</div>;
+  return <div className="calendar__week">{props.children}</div>;
 };

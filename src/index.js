@@ -6,9 +6,9 @@ import { Body } from "./components/body.jsx";
 
 import "./styles.css";
 
-function App() {
+function Calendar() {
   return (
-    <div className="App">
+    <div className="calendar">
       <Header />
       <Body date={new Date()} />
     </div>
@@ -16,4 +16,4 @@ function App() {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.render(<Calendar />, rootElement);
