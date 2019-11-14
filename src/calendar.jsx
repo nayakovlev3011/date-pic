@@ -89,7 +89,7 @@ export default class Calendar extends React.Component {
   handleMousDownArrow = e => {
     console.log(e.target.getAttribute("data"));
     this.setState({
-      bodySlide: "animation-slide-" + e.target.getAttribute("data")
+      bodySlide: "animation-slide-" + e.target.getAttribute("data-del")
     });
   };
 
