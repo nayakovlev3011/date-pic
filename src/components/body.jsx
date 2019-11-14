@@ -99,5 +99,15 @@ export const Body = props => {
     content.push(<Week id={i}>{dayList}</Week>);
   }
 
-  return <div className="calendar-body">{content}</div>;
+  return (
+    <div
+      className={
+        props.slide !== undefined
+          ? "calendar-body " + props.slide
+          : "calendar-body"
+      }
+    >
+      {content}
+    </div>
+  );
 };

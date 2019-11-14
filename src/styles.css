@@ -47,8 +47,19 @@
 .calendar-header__arrow-right::before{
   content: "\003E";
 }*/
-.calendar-bdoy {
-  border: 1px solid;
+.calendar-body {
+}
+.animation-slide-right {
+  animation-name: slideRight;
+  -webkit-animation-name: slideRight;
+
+  animation-duration: 2s;
+  -webkit-animation-duration: 2s;
+
+  animation-timing-function: ease-in-out;
+  -webkit-animation-timing-function: ease-in-out;
+
+  visibility: visible !important;
 }
 .calendar__week {
   display: flex;
@@ -80,4 +91,24 @@
 }
 .calendar__title {
   border: none;
+}
+@keyframes slideRight {
+  0% {
+    transform: translateX(-150%);
+  }
+  50% {
+    transform: translateX(8%);
+  }
+  65% {
+    transform: translateX(-4%);
+  }
+  80% {
+    transform: translateX(4%);
+  }
+  95% {
+    transform: translateX(-2%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
 }
