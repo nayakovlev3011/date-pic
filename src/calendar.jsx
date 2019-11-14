@@ -26,16 +26,117 @@ const nameMonthes = [
 export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      showDropdownPanel: false,
+      date: props.date === undefined ? new Date() : props.date,
+      month: 0,
+      year: 2000
+    };
+
+    this.clickHederMonth = this.clickHeaderMonth.bind(this);
+    this.clickHeaderYear = this.clickHeaderYear.bind(this);
   }
+
+  componentDidMount() {
+    this.setState({
+      month: this.state.date.getMonth(),
+      year: this.state.date.getFullYear()
+    });
+  }
+
+  handleClickArrowLeft = () => {
+    if (this.state.month - 1 > -1) {
+      let m = this.state.month - 1;
+
+      this.setState({
+        month: m,
+        date: new Date(this.state.date.setMonth(m))
+      });
+    } else {
+      let newFullYear = this.state.date.getFullYear() - 1;
+      let newDate = new Date(this.state.date.setFullYear(newFullYear));
+      newDate.setMonth(11);
+
+      this.setState({
+        month: 11,
+        year: this.state.year - 1,
+        date: new Date(newDate)
+      });
+    }
+  };
+
+  handleClickArrowRight = () => {
+    if (this.state.month + 1 < 12) {
+      let m = this.state.month + 1;
+
+      this.setState({
+        month: m,
+        date: new Date(this.state.date.setMonth(m))
+      });
+    } else {
+      let newFullYear = this.state.date.getFullYear() + 1;
+      let newDate = new Date(this.state.date.setFullYear(newFullYear));
+      newDate.setMonth(0);
+      //console.log(newDate);
+      this.setState({
+        month: 0,
+        year: this.state.year + 1,
+        date: new Date(newDate)
+      });
+    }
+  };
+
+  handleMousDownArrow = e => {
+    console.log(e.target.getAttribute("data"));
+    this.setState({
+      bodySlide: "animation-slide-" + e.target.getAttribute("data")
+    });
+  };
+
+  handleMousUpArrow = () => {
+    setTimeout(
+      function() {
+        this.setState({ bodySlide: "" });
+      }.bind(this),
+      1000
+    );
+  };
+
+  clickHeaderMonth = () => {
+    this.setState({ showDropdownPanel: true });
+  };
+
+  clickHeaderYear = e => {
+    console.log(e.currentTarget.textContent);
+    this.setState({ showDropdownPanel: true });
+  };
+
   render() {
     return (
       <div className="calendar">
-        <div className="dropdown-panel">
-          <BoxSelect>{nameMonthes}</BoxSelect>
-        </div>
-        <Header />
-        <Body shortNameDaysWeek={shortNameDaysWeek} date={new Date()} />
+        {this.state.showDropdownPanel ? (
+          <div className="dropdown-panel">
+            <BoxSelect>{nameMonthes}</BoxSelect>
+          </div>
+        ) : (
+          ""
+        )}
+
+        <Header
+          handleClickMonth={this.clickHeaderMonth}
+          handleClickYear={this.clickHeaderYear}
+          nameMonth={nameMonthes[this.state.month]}
+          year={this.state.year}
+          left={this.handleClickArrowLeft}
+          right={this.handleClickArrowRight}
+          arrowDown={this.handleMousDownArrow}
+          arrowUp={this.handleMousUpArrow}
+        />
+        <Body
+          slide={this.state.bodySlide}
+          shortNameDaysWeek={shortNameDaysWeek}
+          date={this.state.date}
+        />
       </div>
     );
   }
