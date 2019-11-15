@@ -3,6 +3,7 @@ import React from "react";
 import { BoxSelect } from "./components/boxselect.jsx";
 
 import { Header } from "./components/header.jsx";
+import { NameDays } from "./components/namedays.jsx";
 import { Body } from "./components/body.jsx";
 
 import "./styles.css";
@@ -27,10 +28,14 @@ export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showDropdownPanel: false,
       date: props.date === undefined ? new Date() : props.date,
       month: 0,
       year: 2000
     };
+
+    this.clickHederMonth = this.clickHeaderMonth.bind(this);
+    this.clickHeaderYear = this.clickHeaderYear.bind(this);
   }
 
   componentDidMount() {
@@ -41,7 +46,7 @@ export default class Calendar extends React.Component {
   }
 
   handleClickArrowLeft = () => {
-    if (this.state.date - 1 > -1) {
+    if (this.state.month - 1 > -1) {
       let m = this.state.month - 1;
 
       this.setState({
@@ -67,8 +72,7 @@ export default class Calendar extends React.Component {
 
       this.setState({
         month: m,
-        date: new Date(this.state.date.setMonth(m)),
-        bodySlide: "animation-slide-right"
+        date: new Date(this.state.date.setMonth(m))
       });
     } else {
       let newFullYear = this.state.date.getFullYear() + 1;
@@ -83,24 +87,62 @@ export default class Calendar extends React.Component {
     }
   };
 
+  handleMousDownArrow = e => {
+    this.setState({
+      bodySlide: "animation-slide-" + e.target.getAttribute("data")
+    });
+  };
+
+  handleMousUpArrow = () => {
+    setTimeout(
+      function() {
+        this.setState({ bodySlide: "" });
+      }.bind(this),
+      500
+    );
+  };
+
+  clickHeaderMonth = () => {
+    this.setState({
+      showDropdownPanel: !this.state.showDropdownPanel,
+      boxselect: 1
+    });
+  };
+
+  clickHeaderYear = () => {
+    this.setState({
+      showDropdownPanel: !this.state.showDropdownPanel,
+      boxselect: 0
+    });
+  };
+
   render() {
-    //console.log(this.state.date);
     return (
       <div className="calendar">
-        <div className="dropdown-panel">
-          <BoxSelect>{nameMonthes}</BoxSelect>
-        </div>
+        {this.state.showDropdownPanel ? (
+          this.state.boxselect === 1 ? (
+            <div className="calendar-dropdown-panel">
+              <BoxSelect current={this.state.month}>{nameMonthes}</BoxSelect>
+            </div>
+          ) : (
+            ""
+          )
+        ) : (
+          ""
+        )}
+
         <Header
+          handleClickMonth={this.clickHeaderMonth}
+          handleClickYear={this.clickHeaderYear}
           nameMonth={nameMonthes[this.state.month]}
           year={this.state.year}
           left={this.handleClickArrowLeft}
           right={this.handleClickArrowRight}
+          arrowDown={this.handleMousDownArrow}
+          arrowUp={this.handleMousUpArrow}
         />
-        <Body
-          slide={this.state.bodySlide}
-          shortNameDaysWeek={shortNameDaysWeek}
-          date={this.state.date}
-        />
+        <NameDays shortNameDaysWeek={shortNameDaysWeek} />
+        <Body slide={this.state.bodySlide} date={this.state.date} />
       </div>
     );
   }

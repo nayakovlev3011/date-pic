@@ -5,7 +5,14 @@ export const BoxSelect = props => {
     <div className="box-select">
       {props.children.map(function(item, idx) {
         return (
-          <div key={idx} className="box-select__item">
+          <div
+            key={idx}
+            className={
+              idx === props.current
+                ? "box-select__item box-select__item_current"
+                : "box-select__item"
+            }
+          >
             {item}
           </div>
         );
