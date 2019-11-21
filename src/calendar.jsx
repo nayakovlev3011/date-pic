@@ -31,7 +31,8 @@ export default class Calendar extends React.Component {
       showDropdownPanel: false,
       date: props.date === undefined ? new Date() : props.date,
       month: 0,
-      year: 2000
+      year: 2000,
+      showArrow: true
     };
 
     this.clickHederMonth = this.clickHeaderMonth.bind(this);
@@ -46,51 +47,57 @@ export default class Calendar extends React.Component {
   }
 
   handleClickArrowLeft = () => {
-    if (this.state.month - 1 > -1) {
-      let m = this.state.month - 1;
+    if (this.state.showArrow) {
+      if (this.state.month - 1 > -1) {
+        let m = this.state.month - 1;
 
-      this.setState({
-        month: m,
-        date: new Date(this.state.date.setMonth(m))
-      });
-    } else {
-      let newFullYear = this.state.date.getFullYear() - 1;
-      let newDate = new Date(this.state.date.setFullYear(newFullYear));
-      newDate.setMonth(11);
+        this.setState({
+          month: m,
+          date: new Date(this.state.date.setMonth(m))
+        });
+      } else {
+        let newFullYear = this.state.date.getFullYear() - 1;
+        let newDate = new Date(this.state.date.setFullYear(newFullYear));
+        newDate.setMonth(11);
 
-      this.setState({
-        month: 11,
-        year: this.state.year - 1,
-        date: new Date(newDate)
-      });
+        this.setState({
+          month: 11,
+          year: this.state.year - 1,
+          date: new Date(newDate)
+        });
+      }
     }
   };
 
   handleClickArrowRight = () => {
-    if (this.state.month + 1 < 12) {
-      let m = this.state.month + 1;
+    if (this.state.showArrow) {
+      if (this.state.month + 1 < 12) {
+        let m = this.state.month + 1;
 
-      this.setState({
-        month: m,
-        date: new Date(this.state.date.setMonth(m))
-      });
-    } else {
-      let newFullYear = this.state.date.getFullYear() + 1;
-      let newDate = new Date(this.state.date.setFullYear(newFullYear));
-      newDate.setMonth(0);
-      //console.log(newDate);
-      this.setState({
-        month: 0,
-        year: this.state.year + 1,
-        date: new Date(newDate)
-      });
+        this.setState({
+          month: m,
+          date: new Date(this.state.date.setMonth(m))
+        });
+      } else {
+        let newFullYear = this.state.date.getFullYear() + 1;
+        let newDate = new Date(this.state.date.setFullYear(newFullYear));
+        newDate.setMonth(0);
+        //console.log(newDate);
+        this.setState({
+          month: 0,
+          year: this.state.year + 1,
+          date: new Date(newDate)
+        });
+      }
     }
   };
 
   handleMousDownArrow = e => {
-    this.setState({
-      bodySlide: "animation-slide-" + e.target.getAttribute("data")
-    });
+    if (this.state.showArrow) {
+      this.setState({
+        bodySlide: "animation-slide-" + e.target.getAttribute("data")
+      });
+    }
   };
 
   handleMousUpArrow = () => {
@@ -105,6 +112,7 @@ export default class Calendar extends React.Component {
   clickHeaderMonth = () => {
     this.setState({
       showDropdownPanel: !this.state.showDropdownPanel,
+      showArrow: !this.state.showArrow,
       boxselect: 1
     });
   };
@@ -119,23 +127,25 @@ export default class Calendar extends React.Component {
   render() {
     return (
       <div className="calendar">
-        {this.state.showDropdownPanel ? (
-          this.state.boxselect === 1 ? (
-            <div className="calendar-dropdown-panel">
-              <BoxSelect current={this.state.month}>{nameMonthes}</BoxSelect>
-            </div>
+        <div className={
+            this.state.showDropdownPanel
+              ? "calendar-dropdown-panel"
+              : "calendar-dropdown-panel calendar-hidden"
+          }
+        >
+          {this.state.boxselect === 1 ? (
+            <BoxSelect current={this.state.month}>{nameMonthes}</BoxSelect>
           ) : (
             ""
-          )
-        ) : (
-          ""
-        )}
+          )}
+        </div>
 
         <Header
           handleClickMonth={this.clickHeaderMonth}
           handleClickYear={this.clickHeaderYear}
           nameMonth={nameMonthes[this.state.month]}
           year={this.state.year}
+          showArrow={this.state.showArrow}
           left={this.handleClickArrowLeft}
           right={this.handleClickArrowRight}
           arrowDown={this.handleMousDownArrow}
