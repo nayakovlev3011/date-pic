@@ -14,6 +14,7 @@ export const Day = props => {
       className={
         "calendar__day" + dayCurrentMonth + (" " + cls + " ") + curr + weekend
       }
+      onClick={props.handleClick}
     >
       {props.children}
     </div>

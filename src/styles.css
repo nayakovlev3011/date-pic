@@ -103,6 +103,10 @@
   color: #495057;
   border: 1px solid #e9ecef;
   border-collapse: collapse;
+  cursor:default;
+}
+.calendar__day:hover{
+  background-color: #e9ecef
 }
 .calendar__day_current,
 .box-select__item_current,
@@ -146,4 +150,5 @@
 .calendar-hidden {
   opacity: 0;
   transition: 1s;
+  z-index: -1;
 }

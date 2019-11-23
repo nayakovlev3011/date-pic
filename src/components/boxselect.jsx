@@ -11,7 +11,8 @@ export const BoxSelect = props => {
               idx === props.current
                 ? "box-select__item box-select__item_current"
                 : "box-select__item"
-            }
+              }
+              onClick={props.clickMonth}
           >
             {item}
           </div>

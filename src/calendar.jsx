@@ -30,64 +30,81 @@ export default class Calendar extends React.Component {
     this.state = {
       showDropdownPanel: false,
       date: props.date === undefined ? new Date() : props.date,
+      day: 0,
       month: 0,
       year: 2000,
-      showArrow: true
+      showArrow: true,
+      yearsList: [
+        2009,
+        2010,
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023
+      ]
     };
-
-    this.clickHederMonth = this.clickHeaderMonth.bind(this);
-    this.clickHeaderYear = this.clickHeaderYear.bind(this);
   }
 
   componentDidMount() {
     this.setState({
+      day: this.state.date.getDate(),
       month: this.state.date.getMonth(),
       year: this.state.date.getFullYear()
     });
   }
 
-  handleClickArrowLeft = () => {
-    if (this.state.showArrow) {
-      if (this.state.month - 1 > -1) {
-        let m = this.state.month - 1;
+  createDate = (year, month) => {
+    let newDate = new Date(this.state.date.setFullYear(year));
+    newDate.setMonth(month);
 
-        this.setState({
-          month: m,
-          date: new Date(this.state.date.setMonth(m))
-        });
-      } else {
-        let newFullYear = this.state.date.getFullYear() - 1;
-        let newDate = new Date(this.state.date.setFullYear(newFullYear));
-        newDate.setMonth(11);
-
-        this.setState({
-          month: 11,
-          year: this.state.year - 1,
-          date: new Date(newDate)
-        });
-      }
-    }
+    return new Date(newDate);
   };
 
-  handleClickArrowRight = () => {
+  handleClickArrow = e => {
     if (this.state.showArrow) {
-      if (this.state.month + 1 < 12) {
-        let m = this.state.month + 1;
+      if (e.currentTarget.textContent === "<") {
+        if (this.state.month - 1 > -1) {
+          let m = this.state.month - 1;
 
-        this.setState({
-          month: m,
-          date: new Date(this.state.date.setMonth(m))
-        });
-      } else {
-        let newFullYear = this.state.date.getFullYear() + 1;
-        let newDate = new Date(this.state.date.setFullYear(newFullYear));
-        newDate.setMonth(0);
-        //console.log(newDate);
-        this.setState({
-          month: 0,
-          year: this.state.year + 1,
-          date: new Date(newDate)
-        });
+          this.setState({
+            month: m,
+            date: this.createDate(this.state.year, m)
+          });
+        } else {
+          let newFullYear = this.state.date.getFullYear() - 1;
+
+          this.setState({
+            month: 11,
+            year: this.state.year - 1,
+            date: this.createDate(newFullYear, 11)
+          });
+        }
+      } else if (e.currentTarget.textContent === ">") {
+        if (this.state.month + 1 < 12) {
+          let m = this.state.month + 1;
+
+          this.setState({
+            month: m,
+            date: this.createDate(this.state.year, m)
+          });
+        } else {
+          let newFullYear = this.state.date.getFullYear() + 1;
+
+          this.setState({
+            month: 0,
+            year: this.state.year + 1,
+            date: this.createDate(newFullYear, 0)
+          });
+        }
       }
     }
   };
@@ -124,19 +141,62 @@ export default class Calendar extends React.Component {
     });
   };
 
+  selectDay = e => {
+    console.log(e.currentTarget.textContent);
+    this.props.getDate(
+      new Date(this.state.year, this.state.month, e.currentTarget.textContent)
+    );
+
+    this.setState({
+      day: e.currentTarget.textContent,
+      date: new Date(this.state.year, this.state.month, e.currentTarget.textContent)
+    })
+  };
+
+  /* ОБРАБОТКА ВЫБОРА МЕСЯЦА В ДРОПДАУНЕ */
+  selectMonth = e => {
+    let month = nameMonthes.indexOf(e.currentTarget.textContent);
+
+    this.setState({
+      month: nameMonthes.indexOf(e.currentTarget.textContent),
+      date: new Date(this.state.date.setMonth(month)),
+      boxselect: 0
+    });
+  };
+
+  selectYear = e => {
+    let year = e.currentTarget.textContent;
+
+    this.setState({
+      year: year,
+      date: this.createDate(year, this.state.month),
+      showDropdownPanel: !this.state.showDropdownPanel,
+      showArrow: !this.state.showArrow
+    });
+  };
+
   render() {
+    console.log(this.state.date)
     return (
       <div className="calendar">
-        <div className={
+        <div
+          className={
             this.state.showDropdownPanel
               ? "calendar-dropdown-panel"
               : "calendar-dropdown-panel calendar-hidden"
           }
         >
           {this.state.boxselect === 1 ? (
-            <BoxSelect current={this.state.month}>{nameMonthes}</BoxSelect>
+            <BoxSelect current={this.state.month} clickMonth={this.selectMonth}>
+              {nameMonthes}
+            </BoxSelect>
           ) : (
-            ""
+            <BoxSelect
+              current={this.state.yearsList.indexOf(this.state.year)}
+              clickMonth={this.selectYear}
+            >
+              {this.state.yearsList}
+            </BoxSelect>
           )}
         </div>
 
@@ -146,13 +206,17 @@ export default class Calendar extends React.Component {
           nameMonth={nameMonthes[this.state.month]}
           year={this.state.year}
           showArrow={this.state.showArrow}
-          left={this.handleClickArrowLeft}
-          right={this.handleClickArrowRight}
+          left={this.handleClickArrow}
+          right={this.handleClickArrow}
           arrowDown={this.handleMousDownArrow}
           arrowUp={this.handleMousUpArrow}
         />
         <NameDays shortNameDaysWeek={shortNameDaysWeek} />
-        <Body slide={this.state.bodySlide} date={this.state.date} />
+        <Body
+          selectDay={this.selectDay}
+          slide={this.state.bodySlide}
+          date={this.state.date}
+        />
       </div>
     );
   }

@@ -5,7 +5,7 @@ import { Day } from "./day.jsx";
 export const Body = props => {
   let content = [];
   let { date } = props;
-  let current = new Date().setHours(0, 0, 0, 0);
+  let current = new Date();
 
   let countDays = new Date(
     date.getFullYear(),
@@ -61,11 +61,8 @@ export const Body = props => {
         endCurrentMonth = true;
       }
 
-      if (
-        new Date(date.getFullYear(), date.getMonth(), d).getTime() === current
-      ) {
+      if (d === date.getDate() && current.getMonth() === date.getMonth() && current.getFullYear() === date.getFullYear())
         curr = true;
-      }
 
       if (index >= firstNumberDay) {
         day++;
@@ -84,6 +81,7 @@ export const Body = props => {
           current={curr}
           weekend={weekend}
           dayCurrentMonth={dayCurrentMonth}
+          handleClick={props.selectDay}
         >
           {d}
         </Day>
